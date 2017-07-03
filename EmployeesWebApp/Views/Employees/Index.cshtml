@@ -1,0 +1,93 @@
+﻿@model IEnumerable<EmployeesWebApp.Models.Employee>
+
+@{
+    ViewBag.Title = "Index";
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+<div class="container ">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-center">Employees Web Application</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div id="box">
+                <h4>List of Employees
+                <span class="glyphicon glyphicon-plus" aria-hidden="true" id="plus"></span>
+                </h4>
+
+                <div class="list-group">
+                    @foreach (var item in Model)
+                    {
+                        @*Database records*@
+                        var myModal = "myModal" + item.ID;
+                        <a href="@Url.Action("Details", new { id = item.ID })" class="list-group-item">
+                            <p class="glyphicon glyphicon-trash" data-toggle="modal" data-target="#@myModal" data-id="@myModal" data-whatever="@item.ID" href="" id="trash" aria-hidden="true" ></p>
+                            <strong>@Html.DisplayFor(modelItem => item.Name)</strong><br>
+                            <p>@Html.DisplayFor(modelItem => item.Job)</p>
+
+                        </a>
+
+
+                       @*Creating a modal for delete *@
+                        <div id="@myModal" class="modal modal-wide fade text-center">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    
+                                    <div class="modal-body text-center">
+                                        <h2>Are you sure you want to delete? </h2>
+                                        @using (Html.BeginForm("Delete", "Employees", new { id = item.ID }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <input type="submit" value="Ok" class="btn btn-default" style="background-color: #76b735; color: white; width:100px;" />
+                                            <button type="button" class="btn btn-default" data-dismiss="modal"  style="background-color: #76b735; color: white;width:100px;">Cancel</button>
+                                        }
+
+                                             
+                                    </div>
+                                    
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
+                    }<!-- end of foreach-->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div id="vertCenter" >
+                <div id="container_inner_frame">
+                    <div id="select" class="vertical-center"><p>Please select an Employee</p></div>                                   
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<hr />
+<footer>
+    <p>&copy; @DateTime.Now.Year - Michal Latus</p>
+</footer>
+
+<script>
+    $(document).ready(function () {
+        $("#plus").click(function (e) {
+            e.preventDefault();
+            $("#select").hide();
+            $("#container_inner_frame").load("@Url.Action("Create")");
+        });
+
+        $('a').click(function () {
+            $('#container_inner_frame').load($(this).attr('href'));
+            return false;
+        });
+        $(".glyphicon-trash").click(function (e) {
+            var modalID = $(this).attr("data-id");
+            e.preventDefault();
+            $("#" + modalID).modal();
+        });
+    });
+    
+</script>
